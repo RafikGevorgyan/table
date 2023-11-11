@@ -6,7 +6,7 @@ import Pagination from '../Pagination';
 import Row from '../Row';
 import SearchByColumn from '../SearchByColumn';
 
-function Table({ data, pageCount = 15 }: TableProps) {
+function Table({ data, rowCountByPage = 15 }: TableProps) {
     const tableData = useRef<(TableData & { filteredData?: any }) | null>(getData(TABLE_DATA) || data);
     const [pageData, setPageData] = useState<Array<any>>([]);
     const [filteredData, setFilteredData] = useState<Array<any> | null>(null);
@@ -33,12 +33,17 @@ function Table({ data, pageCount = 15 }: TableProps) {
     useEffect(() => {
         if (tableData.current?.filteredData) {
             setFilteredData(
-                tableData.current?.filteredData.slice(pageNumber * pageCount - pageCount, pageNumber * pageCount)
+                tableData.current?.filteredData.slice(
+                    pageNumber * rowCountByPage - rowCountByPage,
+                    pageNumber * rowCountByPage
+                )
             );
         } else if (tableData.current?.data) {
-            setPageData(tableData.current.data.slice(pageNumber * pageCount - pageCount, pageNumber * pageCount));
+            setPageData(
+                tableData.current.data.slice(pageNumber * rowCountByPage - rowCountByPage, pageNumber * rowCountByPage)
+            );
         }
-    }, [pageNumber, tableData, pageCount]);
+    }, [pageNumber, tableData, rowCountByPage]);
 
     const handleChange = useCallback((key: string, value: any, rowId: string) => {
         let row = tableData.current?.data.find((el) => el.id === rowId);
@@ -51,7 +56,7 @@ function Table({ data, pageCount = 15 }: TableProps) {
             if (!search) {
                 tableData.current.filteredData = null;
                 setPageNumber(1);
-                setPageData(tableData.current.data.slice(1 * pageCount - pageCount, 1 * pageCount));
+                setPageData(tableData.current.data.slice(1 * rowCountByPage - rowCountByPage, 1 * rowCountByPage));
                 setFilteredData(null);
                 return;
             }
@@ -59,10 +64,10 @@ function Table({ data, pageCount = 15 }: TableProps) {
                 return row[colId].toString().toLowerCase().includes(search.toLowerCase());
             });
             tableData.current.filteredData = filtered;
-            setFilteredData(filtered.slice(pageNumber * pageCount - pageCount, pageNumber * pageCount));
+            setFilteredData(filtered.slice(pageNumber * rowCountByPage - rowCountByPage, pageNumber * rowCountByPage));
             setPageNumber(1);
         },
-        [tableData, pageCount, pageNumber]
+        [tableData, rowCountByPage, pageNumber]
     );
 
     const dataToRender = filteredData ? filteredData : pageData;
@@ -119,7 +124,7 @@ function Table({ data, pageCount = 15 }: TableProps) {
             <div className='flex w-full justify-end'>
                 <Pagination
                     currentPage={pageNumber}
-                    pageSize={pageCount}
+                    pageSize={rowCountByPage}
                     dataSize={dataSize}
                     onPageChange={setPageNumber}
                 />

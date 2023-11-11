@@ -27,7 +27,7 @@ type TableData = {
 
 type TableProps = {
     data: TableData;
-    pageCount?: number;
+    rowCountByPage?: number;
 };
 
 export { Column, Data, TableData, TableProps, VisibleColumn };
