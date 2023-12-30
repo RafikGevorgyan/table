@@ -6,7 +6,7 @@ import SelectionItem from '../SelectionItem';
 interface RowProps {
     row: any;
     columns: Array<Column & { isVisible: boolean }>;
-    onDataChange: (key: string, value: string | number, rowId: string) => void;
+    onDataChange: (key: string, value: any, rowId: string) => void;
 }
 
 function Row({ row, columns, onDataChange }: RowProps) {
@@ -21,7 +21,12 @@ function Row({ row, columns, onDataChange }: RowProps) {
                     />
                 );
             case 'selection':
-                return <SelectionItem data={value} />;
+                return (
+                    <SelectionItem
+                        data={value}
+                        onChange={(val) => onDataChange(key, val, row.id)}
+                    />
+                );
             default:
                 return value.toString();
         }

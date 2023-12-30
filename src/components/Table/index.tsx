@@ -10,9 +10,10 @@ function Table({ data, rowCountByPage = 15 }: TableProps) {
     const tableData = useRef<(TableData & { filteredData?: any }) | null>(getData(TABLE_DATA) || data);
     const [pageData, setPageData] = useState<Array<any>>([]);
     const [filteredData, setFilteredData] = useState<Array<any> | null>(null);
-    const [pageNumber, setPageNumber] = useState<number>(getData(PAGE_NUMBER) || 1);
+    const [pageNumber, setPageNumber] = useState<number>(() => getData(PAGE_NUMBER) || 1);
     const [visibleColumns, setVisibleColumns] = useState<Array<VisibleColumn>>(
-        getData(VISIBLE_COLUMNS) ||
+        () =>
+            getData(VISIBLE_COLUMNS) ||
             data.columns.sort((a, b) => a.ordinalNo - b.ordinalNo).map((col) => ({ ...col, isVisible: true }))
     );
 
